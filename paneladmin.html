@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>letsknowledge. - Dashboard Admin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <style>
+    .hilang-scroll::-webkit-scrollbar {
+      display: none;
+    }
+
+    .hilang-scroll {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .modal-title {
+      font-size: clamp(1.2rem, 4vw, 1.6rem) !important;
+      letter-spacing: -0.5px;
+    }
+
+    .modal-actions-container {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+
+    .btn-close-modal {
+      width: 36px;
+      height: 36px;
+      background: #f3f4f6;
+      border: none;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #4b5563;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-close-modal:hover {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    @media (max-width: 480px) {
+      .modal-header-wrap {
+        flex-direction: column;
+        align-items: flex-start !important;
+        gap: 15px;
+        padding-right: 0 !important;
+      }
+
+      .modal-text-container {
+        padding-right: 45px;
+        width: 100%;
+        box-sizing: border-box;
+      }
+
+      .modal-actions-container {
+        width: 100%;
+      }
+
+      #timeRangeFilter {
+        width: 100% !important;
+        text-align: center;
+        text-align-last: center;
+      }
+
+      .btn-close-modal {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        z-index: 10;
+      }
+    }
+
+    .custom-select-trigger {
+      padding: 6px 12px !important;
+      min-height: 34px !important;
+      border-radius: 8px !important;
+    }
+
+    .custom-select-trigger span {
+      font-size: 0.8rem !important;
+      font-weight: 600;
+    }
+
+    .custom-select-item {
+      padding: 8px 12px !important;
+      font-size: 0.8rem !important;
+    }
+
+    .custom-select-menu {
+      border-radius: 8px !important;
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="logo" style="cursor: pointer" onclick="window.location.href='home.html'">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+        class="icon" style="color: #111827">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09l2.846.813-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a2.25 2.25 0 0 0-1.506-1.506L15.2 7l1.035-.259a2.25 2.25 0 0 0 1.506-1.506L18 4.2l.259 1.035a2.25 2.25 0 0 0 1.506 1.506L20.8 7l-1.035.259a2.25 2.25 0 0 0-1.506 1.506Z" />
+      </svg>
+      <span style="font-size: 1.3rem; letter-spacing: -0.5px">
+        <span style="font-weight: 800; color: #111827">lets</span><span
+          style="font-weight: 400; color: #4b5563">knowledge.</span>
+      </span>
+    </div>
+    <div class="nav-actions">
+      <div id="profileContainer" class="profile-container hidden">
+        <div id="profilePicture" class="profile-pic"></div>
+
+        <div class="profile-hover-modal" style="
+              background: #ffffff;
+              border: 1px solid #e5e7eb;
+              border-radius: 16px;
+              padding: 16px;
+              box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+                0 8px 10px -6px rgba(0, 0, 0, 0.1);
+              width: 240px;
+              display: flex;
+              flex-direction: column;
+              gap: 16px;
+              position: absolute; /* Pastikan posisi ngikutin settingan lu */
+              right: 0;
+              top: 50px;
+            ">
+          <div style="display: flex; align-items: center; gap: 12px">
+            <div id="hoverUserAvatar" style="
+                  width: 44px;
+                  height: 44px;
+                  border-radius: 50%;
+                  background: #f3f4f6;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  color: #9ca3af;
+                  border: 2px solid #e5e7eb;
+                  overflow: hidden;
+                  flex-shrink: 0;
+                ">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"
+                style="width: 24px; height: 24px">
+                <path fill-rule="evenodd"
+                  d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z"
+                  clip-rule="evenodd" />
+              </svg>
+            </div>
+
+            <div style="display: flex; flex-direction: column; overflow: hidden">
+              <span id="hoverUserName" style="
+                    font-size: 1.05rem;
+                    font-weight: 800;
+                    color: #111827;
+                    letter-spacing: -0.5px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                  " data-i18n="loading">Memuat...</span>
+              <span id="hoverUserEmail" style="
+                    font-size: 0.75rem;
+                    color: #6b7280;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                  " data-i18n="loading_email">memuat email...</span>
+            </div>
+          </div>
+
+          <div style="height: 1px; background: #f3f4f6; width: 100%"></div>
+
+          <div style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+              ">
+            <span style="
+                  font-size: 0.7rem;
+                  font-weight: 700;
+                  color: #9ca3af;
+                  text-transform: uppercase;
+                  letter-spacing: 0.5px;
+                " data-i18n="access_rights">Hak Akses</span>
+            <span id="hoverUserStatus" style="
+                  display: inline-flex;
+                  align-items: center;
+                  gap: 4px;
+                  padding: 4px 10px;
+                  border-radius: 6px;
+                  font-size: 0.75rem;
+                  font-weight: 700;
+                  background: #f3f4f6;
+                  color: #4b5563;
+                  transition: 0.3s;
+                " data-i18n="loading">Memuat...</span>
+          </div>
+          <div style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+              ">
+            <span style="
+                  font-size: 0.7rem;
+                  font-weight: 700;
+                  color: #9ca3af;
+                  text-transform: uppercase;
+                  letter-spacing: 0.5px;
+                " data-i18n="borrow_quota">Kuota Pinjam</span>
+            <div style="display: flex; gap: 4px; align-items: center">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                stroke="currentColor" style="width: 14px; height: 14px; color: #3b82f6">
+                <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25" />
+              </svg>
+              <span id="textKuotaPinjamProfile" style="font-weight: 800; color: #111827; font-size: 0.8rem">...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button id="authBtn" class="btn-primary">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"
+          class="icon-sm">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+        </svg>
+        <span id="authBtnText" data-i18n="login_btn">Masuk</span>
+      </button>
+    </div>
+  </nav>
+
+  <main class="container"></main>
+
+  <div id="authModal" class="modal-overlay">
+    <div class="modal-content auth-box">
+      <form id="loginForm" class="auth-form">
+        <div class="auth-header">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="auth-icon">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09l2.846.813-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a2.25 2.25 0 0 0-1.506-1.506L15.2 7l1.035-.259a2.25 2.25 0 0 0 1.506-1.506L18 4.2l.259 1.035a2.25 2.25 0 0 0 1.506 1.506L20.8 7l-1.035.259a2.25 2.25 0 0 0-1.506 1.506Z" />
+          </svg>
+          <h2 class="auth-title" data-i18n="auth_welcome">Selamat Datang</h2>
+          <p class="auth-subtitle" data-i18n="auth_login_subtitle">Silakan masuk ke akun Anda</p>
+        </div>
+
+        <div class="input-group">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+          </svg>
+          <input type="text" id="loginUsername" placeholder="Username" data-i18n-placeholder="placeholder_username" required />
+        </div>
+
+        <div class="input-group">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+          </svg>
+          <input type="email" id="loginEmail" placeholder="Email Address" data-i18n-placeholder="placeholder_email" required />
+        </div>
+
+        <div class="input-group">
+          <svg class="icon-left" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+          </svg>
+          <input type="password" id="loginPassword" placeholder="Password" data-i18n-placeholder="placeholder_password" required />
+
+          <button type="button" class="toggle-password" data-target="loginPassword">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
+            </svg>
+          </button>
+        </div>
+
+        <button type="submit" class="btn-primary w-full" id="loginSubmitBtn"
+          style="margin-top: 10px; padding: 12px; font-size: 1rem">
+          Masuk
+        </button>
+        <p id="loginError" class="error-msg"></p>
+
+        <p class="auth-switch">
+          <span data-i18n="auth_new_here">Belum pernah kesini?</span>
+          <span id="switchToRegister" class="text-link">Register</span>
+        </p>
+      </form>
+
+      <form id="registerForm" class="auth-form hidden">
+        <div class="auth-header">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor" class="auth-icon">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09l2.846.813-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a2.25 2.25 0 0 0-1.506-1.506L15.2 7l1.035-.259a2.25 2.25 0 0 0 1.506-1.506L18 4.2l.259 1.035a2.25 2.25 0 0 0 1.506 1.506L20.8 7l-1.035.259a2.25 2.25 0 0 0-1.506 1.506Z" />
+          </svg>
+          <h2 class="auth-title" data-i18n="auth_reg_title">Daftar Akun</h2>
+          <p class="auth-subtitle" data-i18n="auth_reg_subtitle">Bergabung dengan letsknowledge.</p>
+        </div>
+
+        <div class="input-group">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z" />
+          </svg>
+          <input type="text" id="regName" placeholder="Nama Lengkap" data-i18n-placeholder="placeholder_fullname" required />
+        </div>
+
+        <div class="input-group">
+          <svg class="icon-left" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M16.5 12a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0Zm0 0c0 1.657 1.007 3 2.25 3S21 13.657 21 12a9 9 0 1 0-2.636 6.364M16.5 12V8.25" />
+          </svg>
+          <input type="text" id="regUsername" placeholder="Username" data-i18n-placeholder="placeholder_username" required />
+        </div>
+
+        <div class="input-group">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" />
+          </svg>
+          <input type="email" id="regEmail" placeholder="Email Address" data-i18n-placeholder="placeholder_email" required />
+        </div>
+
+        <div class="input-group">
+          <svg class="icon-left" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+          </svg>
+          <input type="password" id="regPassword" placeholder="Password" data-i18n-placeholder="placeholder_password" required />
+          <button type="button" class="toggle-password" data-target="regPassword">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
+            </svg>
+          </button>
+        </div>
+
+        <div class="input-group">
+          <svg class="icon-left" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+            stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" />
+          </svg>
+          <input type="password" id="regConfirmPassword" placeholder="Confirm Password" data-i18n-placeholder="placeholder_confirm_password" required />
+          <button type="button" class="toggle-password" data-target="regConfirmPassword">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+              stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88" />
+            </svg>
+          </button>
+        </div>
+
+        <button type="submit" class="btn-primary w-full" id="regSubmitBtn"
+          style="margin-top: 10px; padding: 12px; font-size: 1rem">
+          Daftar Akun
+        </button>
+        <p id="regError" class="error-msg"></p>
+
+        <p class="auth-switch">
+          <span data-i18n="auth_already_here">Sudah pernah kesini?</span>
+          <span id="switchToLogin" class="text-link">Login!</span>
+        </p>
+      </form>
+    </div>
+  </div>
+
+  <nav id="floatingNav" class="floating-nav">
+    <button id="openSettingsBtn" class="nav-item" title="Pengaturan" data-i18n-title="nav_settings">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 0 0 -2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 0 0 -1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 0 0 1.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z" />
+      </svg>
+    </button>
+
+    <a href="perpus.html" class="nav-item" title="Perpustakaan" data-i18n-title="nav_library">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z" />
+      </svg>
+    </a>
+
+    <a href="favorit.html" class="nav-item" title="Buku Favorit" data-i18n-title="nav_favorites">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
+      </svg>
+    </a>
+
+    <a href="home.html" class="nav-item" title="Halaman Utama" data-i18n-title="nav_home">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
+      </svg>
+    </a>
+
+    <a href="riwayat.html" class="nav-item" title="Riwayat Aktivitas" data-i18n-title="nav_history">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+      </svg>
+    </a>
+
+    <a href="peminjaman.html" class="nav-item" title="Status Peminjaman" data-i18n-title="nav_borrow_status">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3Z" />
+      </svg>
+    </a>
+
+    <div id="adminLinkContainer"></div>
+  </nav>
+
+  <div id="settingsModal" class="modal-overlay hidden">
+    <div class="modal-content auth-box" style="max-width: 320px">
+      <div class="auth-header">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"
+          class="auth-icon">
+          <path stroke-linecap="round" stroke-linejoin="round"
+            d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.99l1.004.828c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z" />
+          <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z" />
+        </svg>
+        <h2 class="auth-title" data-i18n="settings_title">Pengaturan</h2>
+        <p class="auth-subtitle" data-i18n="settings_subtitle">Tema & Tampilan Demo</p>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 10px">
+        <div style="
+              position: relative;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              background: #ffffff;
+              border: 1px solid #e5e7eb;
+              border-radius: 8px;
+              padding: 0 16px;
+              height: 44px;
+              box-sizing: border-box;
+              overflow: hidden;
+            ">
+          <div style="
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(45deg, #fbbf24, #fbbf24 10px, #111827 10px, #111827 20px);
+            opacity: 0.9;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: not-allowed;
+          ">
+            <span style="background: #111827; color: #fbbf24; padding: 2px 8px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; border-radius: 4px; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.5);">Coming Soon</span>
+          </div>
+          <span style="font-size: 0.85rem; font-weight: 700; color: #4b5563; opacity: 0.4" data-i18n="dark_mode">Mode Gelap</span>
+          <div class="toggle" style="
+                transform: scale(0.4);
+                transform-origin: right center;
+                margin-right: -10px;
+                opacity: 0.4;
+                pointer-events: none;
+              ">
+            <div>
+              <input type="checkbox" id="darkModeToggle" disabled />
+              <div data-unchecked="Off" data-checked="On"></div>
+            </div>
+          </div>
+        </div>
+
+        <div style="
+              position: relative;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              background: #ffffff;
+              border: 1px solid #e5e7eb;
+              border-radius: 8px;
+              padding: 0 16px;
+              height: 44px;
+              box-sizing: border-box;
+              overflow: hidden;
+            ">
+          <div style="
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: repeating-linear-gradient(45deg, #fbbf24, #fbbf24 10px, #111827 10px, #111827 20px);
+            opacity: 0.9;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: not-allowed;
+          ">
+            <span style="background: #111827; color: #fbbf24; padding: 2px 8px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; border-radius: 4px; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.5);">Coming Soon</span>
+          </div>
+          <span style="font-size: 0.85rem; font-weight: 700; color: #4b5563; opacity: 0.4" data-i18n="language">Bahasa</span>
+          <div class="toggle" style="
+                transform: scale(0.4);
+                transform-origin: right center;
+                margin-right: -10px;
+                opacity: 0.4;
+                pointer-events: none;
+              ">
+            <div>
+              <input type="checkbox" id="languageToggle" disabled />
+              <div data-unchecked="ID" data-checked="EN"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <button id="closeSettingsBtn" class="btn-primary w-full" style="margin-top: 20px; padding: 10px" data-i18n="close_btn">Tutup</button>
+    </div>
+  </div>
+
+  <div id="globalLoader" class="global-loader-overlay hidden">
+    <div class="loader"></div>
+  </div>
+
+  <div id="chartDetailModal" class="hidden" style="
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(17, 24, 39, 0.6);
+        backdrop-filter: blur(4px);
+        z-index: 100000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      ">
+    <div style="
+          background: white;
+          padding: 35px;
+          border-radius: 24px;
+          width: 95%;
+          max-width: 600px;
+          position: relative;
+          box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+          box-sizing: border-box;
+        ">
+      <button id="closeChartModal" style="
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: #f3f4f6;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #6b7280;
+            transition: 0.2s;
+            z-index: 20;
+          " onmouseover="this.style.background='#e5e7eb'; this.style.color='#111827';"
+        onmouseout="this.style.background='#f3f4f6'; this.style.color='#6b7280';">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"
+          style="width: 18px; height: 18px">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <header style="text-align: left; margin-bottom: 20px; padding-right: 40px">
+        <h2 id="modalChartTitle" style="
+              font-size: 1.4rem;
+              font-weight: 800;
+              color: #111827;
+              margin: 0 0 4px 0;
+              letter-spacing: -0.5px;
+            ">
+          <span data-i18n="admin_stats_title">Statistik Koleksi</span>
+        </h2>
+        <p style="color: #6b7280; font-size: 0.85rem; margin: 0">
+          <span data-i18n="admin_stats_subtitle">Analisis data lebih mendalam.</span>
+        </p>
+      </header>
+
+      <div style="
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            align-items: flex-start;
+          ">
+        <div style="width: 100%; max-width: 160px">
+          <div id="wadahFilterModal"></div>
+          <input type="hidden" id="timeRangeFilter" value="monthly" />
+        </div>
+
+        <div style="height: 280px; width: 100%; margin-top: 5px">
+          <canvas id="modalCanvas"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js"></script>
+  <script src="javascript/custom-alert.js"></script>
+  <script type="module" src="javascript/main.js"></script>
+  <script type="module" src="javascript/admin-panel.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>letsknowledge. - Platform Perpustakaan Digital</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/hyperspeed.css" />
+  <meta name="description" content="Platform perpustakaan digital modern. Temukan, pinjam, dan kelola koleksi buku dengan mudah di letsknowledge." />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="letsknowledge." />
+  <meta property="og:title" content="letsknowledge. - Platform Perpustakaan Digital" />
+  <meta property="og:description" content="Platform perpustakaan digital modern. Temukan, pinjam, dan kelola koleksi buku dengan mudah di letsknowledge." />
+  <meta property="og:url" content="https://letsknowledge.vercel.app/index.html" />
+
+  <meta property="og:image" content="https://portofolio-ryuurpl2.vercel.app/dokumen/Screenshot 2026-05-14 120431.png" />
+  <meta property="og:image:secure_url"
+    content="https://portofolio-ryuurpl2.vercel.app/dokumen/Screenshot 2026-05-14 120431.png" />
+  <meta property="og:image:type" content="image/jpeg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="Portofolio AEA ⏳🔧" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="letsknowledge. - Platform Perpustakaan Digital" />
+  <meta name="twitter:description" content="Platform perpustakaan digital modern. Temukan, pinjam, dan kelola koleksi buku dengan mudah di letsknowledge." />
+  <meta name="twitter:image"
+    content="https://portofolio-ryuurpl2.vercel.app/dokumen/Screenshot 2026-05-14 120431.png" />
+  <style>
+    :root {
+      --primary: #ffffff;
+      --bg: #000000;
+    }
+
+    body,
+    html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--bg);
+      font-family: 'Inter', sans-serif;
+      overflow: hidden;
+      color: var(--primary);
+    }
+
+    #lights {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+    }
+
+    .overlay {
+      position: relative;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(circle at center, rgba(0, 0, 0, 0) 0%, rgba(0, 0, 0, 0.5) 100%);
+      pointer-events: none;
+    }
+
+    .nav-header {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      padding: 24px 40px;
+      box-sizing: border-box;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: auto;
+    }
+
+    .brand {
+      font-size: 1.3rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin: 0;
+      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+
+    .brand-accent {
+      color: #cbd5e1;
+      font-weight: 400;
+    }
+
+    .hero-content {
+      text-align: center;
+      max-width: 800px;
+      padding: 0 20px;
+      pointer-events: auto;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      padding: 6px 16px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      margin-bottom: 24px;
+      backdrop-filter: blur(10px);
+    }
+
+    .badge span.new {
+      background: #fff;
+      color: #000;
+      padding: 2px 8px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      font-weight: 700;
+    }
+
+    .hero-title {
+      font-size: 2.8rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin: 0 0 24px 0;
+      letter-spacing: -1px;
+      text-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+    }
+
+    .btn {
+      padding: 12px 24px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.3s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-primary {
+      background: #ffffff;
+      color: #000000;
+      border: none;
+      box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(10px);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: rgba(255, 255, 255, 0.4);
+    }
+
+    @media (max-width: 768px) {
+      .hero-title {
+        font-size: 2rem;
+      }
+
+      .nav-header {
+        padding: 20px;
+      }
+    }
+  </style>
+
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://esm.sh/three@0.160.0",
+        "postprocessing": "https://esm.sh/postprocessing@6.34.1"
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <div id="lights"></div>
+
+  <div class="overlay">
+    <header class="nav-header">
+      <h1 class="brand">lets<span class="brand-accent">knowledge.</span></h1>
+    </header>
+
+    <main class="hero-content">
+      <div class="badge">
+        <span class="new">NEW</span>
+        <span data-i18n="index_badge">Platform Peminjaman Buku Terpadu</span>
+      </div>
+
+      <h2 class="hero-title" data-i18n="index_hero">
+        Tahan klik layar untuk<br />
+        menjelajahi dunia<br />
+        literasi tanpa batas.
+      </h2>
+
+      <div class="action-buttons">
+        <a href="home.html" class="btn btn-primary" data-i18n="index_start">Mulai Sekarang</a>
+        <a href="home.html" class="btn btn-secondary" data-i18n="index_learn">Pelajari Lebih Lanjut</a>
+      </div>
+    </main>
+  </div>
+
+  <script type="module">
+    import { initHyperspeed } from './javascript/hyperspeed-vanilla.js';
+    import { getLanguage, applyTranslations } from './javascript/i18n.js';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      applyTranslations(getLanguage());
+
+      const container = document.getElementById('lights');
+
+      const effectOptions = {
+        onSpeedUp: () => { console.log("Speeding up!"); },
+        onSlowDown: () => { console.log("Slowing down!"); },
+        distortion: 'turbulentDistortion',
+        length: 400,
+        roadWidth: 10,
+        islandWidth: 2,
+        lanesPerRoad: 4,
+        fov: 90,
+        fovSpeedUp: 150,
+        speedUp: 2,
+        carLightsFade: 0.4,
+        totalSideLightSticks: 20,
+        lightPairsPerRoadWay: 40,
+        shoulderLinesWidthPercentage: 0.05,
+        brokenLinesWidthPercentage: 0.1,
+        brokenLinesLengthPercentage: 0.5,
+        lightStickWidth: [0.12, 0.5],
+        lightStickHeight: [1.3, 1.7],
+        movingAwaySpeed: [60, 80],
+        movingCloserSpeed: [-120, -160],
+        carLightsLength: [400 * 0.03, 400 * 0.2],
+        carLightsRadius: [0.05, 0.14],
+        carWidthPercentage: [0.3, 0.5],
+        carShiftX: [-0.8, 0.8],
+        carFloorSeparation: [0, 5],
+        colors: {
+          roadColor: 0x080808,
+          islandColor: 0x0a0a0a,
+          background: 0x000000,
+          shoulderLines: 0xffffff,
+          brokenLines: 0xffffff,
+          leftCars: [0xd856bf, 0x6750a2, 0xc247ac],
+          rightCars: [0x03b3c3, 0x0e5ea5, 0x324555],
+          sticks: 0x03b3c3
+        }
+      };
+
+      try {
+        const app = initHyperspeed(container, effectOptions);
+
+        window.addEventListener('beforeunload', () => {
+          if (app && app.dispose) {
+            app.dispose();
+          }
+        });
+      } catch (err) {
+        console.error("Gagal memuat hyperspeed:", err);
+      }
+    });
+  </script>
+</body>
+
+</html>

@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="id">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>letsknowledge. - Dashboard Admin</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/style.css" />
+    <style>
+      .dashboard-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+      .form-wrapper {
+        background: #fff;
+        padding: 30px;
+        border-radius: 24px;
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      }
+      .input-field {
+        width: 100%;
+        padding: 12px;
+        margin-top: 5px;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        background: #f9fafb;
+        font-family: inherit;
+      }
+      .input-label {
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: #374151;
+      }
+      .flex-row {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 30px;
+        align-items: flex-start;
+      }
+      .col-form {
+        flex: 1 1 500px;
+      }
+      .col-preview {
+        flex: 0 0 300px;
+        position: sticky;
+        top: 40px;
+      }
+
+      @media (max-width: 860px) {
+        .flex-row {
+          flex-direction: column;
+          align-items: center;
+          gap: 40px;
+        }
+
+        .col-form {
+          flex: 1 1 100%;
+          width: 100%;
+        }
+
+        .col-preview {
+          flex: 1 1 100%;
+          width: 100%;
+          position: static;
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+        }
+
+        .col-preview p {
+          text-align: center;
+          width: 100%;
+        }
+
+        #livePreviewCard {
+          max-width: 350px;
+        }
+      }
+
+      #upSynopsis::-webkit-scrollbar,
+      #upStory::-webkit-scrollbar {
+        display: none;
+      }
+
+      #upSynopsis,
+      #upStory {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
+    </style>
+  </head>
+  <body>
+    <nav class="navbar">
+      <div
+        class="logo"
+        style="cursor: pointer"
+        onclick="window.location.href='home.html'"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+          class="icon"
+          style="color: #111827"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09l2.846.813-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a2.25 2.25 0 0 0-1.506-1.506L15.2 7l1.035-.259a2.25 2.25 0 0 0 1.506-1.506L18 4.2l.259 1.035a2.25 2.25 0 0 0 1.506 1.506L20.8 7l-1.035.259a2.25 2.25 0 0 0-1.506 1.506Z"
+          />
+        </svg>
+        <span style="font-size: 1.3rem; letter-spacing: -0.5px">
+          <span style="font-weight: 800; color: #111827">lets</span
+          ><span style="font-weight: 400; color: #4b5563">knowledge.</span>
+        </span>
+      </div>
+      <div class="nav-actions">
+        <div id="profileContainer" class="profile-container hidden">
+          <div id="profilePicture" class="profile-pic"></div>
+
+          <div
+            class="profile-hover-modal"
+            style="
+              background: #ffffff;
+              border: 1px solid #e5e7eb;
+              border-radius: 16px;
+              padding: 16px;
+              box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1),
+                0 8px 10px -6px rgba(0, 0, 0, 0.1);
+              width: 240px;
+              display: flex;
+              flex-direction: column;
+              gap: 16px;
+              position: absolute; /* Pastikan posisi ngikutin settingan lu */
+              right: 0;
+              top: 50px;
+            "
+          >
+            <div style="display: flex; align-items: center; gap: 12px">
+              <div
+                id="hoverUserAvatar"
+                style="
+                  width: 44px;
+                  height: 44px;
+                  border-radius: 50%;
+                  background: #f3f4f6;
+                  display: flex;
+                  align-items: center;
+                  justify-content: center;
+                  color: #9ca3af;
+                  border: 2px solid #e5e7eb;
+                  overflow: hidden;
+                  flex-shrink: 0;
+                "
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  style="width: 24px; height: 24px"
+                >
+                  <path
+                    fill-rule="evenodd"
+                    d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z"
+                    clip-rule="evenodd"
+                  />
+                </svg>
+              </div>
+
+              <div
+                style="display: flex; flex-direction: column; overflow: hidden"
+              >
+                <span
+                  id="hoverUserName"
+                  style="
+                    font-size: 1.05rem;
+                    font-weight: 800;
+                    color: #111827;
+                    letter-spacing: -0.5px;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                  "
+                  >Memuat...</span
+                >
+                <span
+                  id="hoverUserEmail"
+                  style="
+                    font-size: 0.75rem;
+                    color: #6b7280;
+                    white-space: nowrap;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                  "
+                  >memuat email...</span
+                >
+              </div>
+            </div>
+
+            <div style="height: 1px; background: #f3f4f6; width: 100%"></div>
+
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+              "
+            >
+              <span
+                style="
+                  font-size: 0.7rem;
+                  font-weight: 700;
+                  color: #9ca3af;
+                  text-transform: uppercase;
+                  letter-spacing: 0.5px;
+                "
+                >Hak Akses</span
+              >
+              <span
+                id="hoverUserStatus"
+                style="
+                  display: inline-flex;
+                  align-items: center;
+                  gap: 4px;
+                  padding: 4px 10px;
+                  border-radius: 6px;
+                  font-size: 0.75rem;
+                  font-weight: 700;
+                  background: #f3f4f6;
+                  color: #4b5563;
+                  transition: 0.3s;
+                "
+               data-i18n="loading">Memuat...</span>
+            </div>
+            <div
+              style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+              "
+            >
+              <span
+                style="
+                  font-size: 0.7rem;
+                  font-weight: 700;
+                  color: #9ca3af;
+                  text-transform: uppercase;
+                  letter-spacing: 0.5px;
+                "
+                >Kuota Pinjam</span
+              >
+              <div style="display: flex; gap: 4px; align-items: center">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke-width="2"
+                  stroke="currentColor"
+                  style="width: 14px; height: 14px; color: #3b82f6"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"
+                  />
+                </svg>
+                <span
+                  id="textKuotaPinjamProfile"
+                  style="font-weight: 800; color: #111827; font-size: 0.8rem"
+                  >...</span
+                >
+              </div>
+            </div>
+          </div>
+        </div>
+        <button id="authBtn" class="btn-primary">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+            stroke="currentColor"
+            class="icon-sm"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"
+            />
+          </svg>
+          <span id="authBtnText" data-i18n="login_btn">Masuk</span>
+        </button>
+      </div>
+    </nav>
+
+    <main class="dashboard-container">
+      <header style="margin-bottom: 30px; text-align: left">
+        <h1
+          style="
+            font-size: 2rem;
+            font-weight: 800;
+            color: #111827;
+            letter-spacing: -1px;
+          "
+        >
+          <span data-i18n="upload_title">Tambah Koleksi Buku</span>
+        </h1>
+        <p style="color: #6b7280; margin-top: 5px">
+          <span data-i18n="upload_subtitle">Lengkapi detail di sebelah kiri dan pantau tampilan kartu di sebelah</span>
+          kanan.
+        </p>
+      </header>
+
+      <div class="flex-row">
+        <div class="col-form">
+          <section class="form-wrapper">
+            <form
+              id="uploadBookForm"
+              style="display: flex; flex-direction: column; gap: 18px"
+            >
+              <div style="position: relative">
+                <label class="input-label" data-i18n="upload_form_title">Judul Buku</label>
+                <input
+                  type="text"
+                  id="upTitle"
+                  class="input-field"
+                  placeholder="Contoh: Filosofi Teras"
+                  data-i18n-placeholder="upload_placeholder_title"
+                  maxlength="100"
+                  required
+                />
+                <span
+                  id="warnTitle"
+                  data-i18n="upload_warn_title_limit"
+                  style="
+                    font-size: 11px;
+                    color: #dc2626;
+                    font-weight: bold;
+                    position: absolute;
+                    bottom: -18px;
+                    left: 0;
+                    display: none;
+                  "
+                  >Limit 100 karakter tercapai!</span
+                >
+              </div>
+
+              <div style="display: flex; gap: 15px; margin-top: 10px">
+                <div style="flex: 2; position: relative">
+                  <label class="input-label" data-i18n="upload_form_author">Penulis</label>
+                  <input
+                    type="text"
+                    id="upAuthor"
+                    class="input-field"
+                    maxlength="50"
+                    placeholder="Henry Manampiring"
+                    data-i18n-placeholder="upload_placeholder_author"
+                    required
+                  />
+                  <span
+                    id="warnAuthor"
+                    data-i18n="upload_warn_author_limit"
+                    style="
+                      font-size: 11px;
+                      color: #dc2626;
+                      font-weight: bold;
+                      position: absolute;
+                      bottom: -18px;
+                      left: 0;
+                      display: none;
+                    "
+                    >Limit 60 karakter tercapai!</span
+                  >
+                </div>
+
+                <div style="flex: 1">
+                  <label class="input-label" data-i18n="upload_form_stock">Stok Buku</label>
+                  <input
+                    type="number"
+                    id="upStock"
+                    class="input-field"
+                    value="1"
+                    min="1"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div style="display: flex; gap: 15px">
+                <div style="flex: 1">
+                  <label class="input-label" data-i18n="upload_form_year">Tahun Terbit</label>
+                  <input
+                    type="number"
+                    id="upYear"
+                    class="input-field"
+                    style="
+                      padding: 14px 16px;
+                      box-sizing: border-box;
+                      width: 100%;
+                      height: auto;
+                    "
+                    value="2026"
+                    required
+                  />
+                </div>
+                <div style="flex: 1">
+                  <label class="input-label" data-i18n="upload_form_publisher">Penerbit</label>
+                  <input
+                    type="text"
+                    id="upPublisher"
+                    class="input-field"
+                    style="
+                      padding: 14px 16px;
+                      box-sizing: border-box;
+                      width: 100%;
+                      height: auto;
+                    "
+                    placeholder="Gramedia"
+                    data-i18n-placeholder="upload_placeholder_publisher"
+                    required
+                  />
+                </div>
+
+                <div style="flex: 1">
+                  <label class="input-label" data-i18n="upload_form_genre">Genre</label>
+                  <div id="wadahUpGenre" style="margin-top: 5.5px"></div>
+                  <input type="hidden" id="upGenre" required />
+                </div>
+              </div>
+
+              <div>
+                <label class="input-label" data-i18n="upload_form_cover">Ikon Sampul / Path Internal</label>
+                <div style="position: relative; margin-top: 5px">
+                  <div id="wadahUpCover" style="margin-top: 8px;"></div>
+                  <input type="hidden" id="upCoverSelect" required />
+
+                  <input
+                    type="text"
+                    id="upCoverInput"
+                    class="input-field hidden"
+                    style="
+                      padding: 14px 16px;
+                      box-sizing: border-box;
+                      width: 100%;
+                      height: auto;
+                    "
+                    placeholder="Contoh: assets/thumb/book/dilan.jpeg"
+                    data-i18n-placeholder="upload_placeholder_cover"
+                  />
+                </div>
+                <p
+                  id="coverHint"
+                  style="font-size: 0.75rem; color: #6b7280; margin-top: 5px"
+                  data-i18n="upload_cover_hint"
+                >
+                  Pilih jenis cover SVG atau pilih "Ketik Path" untuk gambar
+                  lokal. (Klik 2x pada input untuk kembali).
+                </p>
+              </div>
+
+              <div>
+                <label class="input-label" data-i18n="upload_form_synopsis">Sinopsis Singkat</label>
+                <textarea
+                  id="upSynopsis"
+                  class="input-field no-scrollbar"
+                  rows="4"
+                  required
+                  placeholder="Synopsis Buku..."
+                  data-i18n-placeholder="upload_placeholder_synopsis"
+                  style="resize: vertical"
+                ></textarea>
+              </div>
+
+              <div>
+                <label class="input-label" data-i18n="upload_form_content">Isi Cerita / Bab 1</label>
+                <textarea
+                  id="upStory"
+                  class="input-field no-scrollbar"
+                  rows="6"
+                  required
+                  placeholder="Isi Cerita / Bab 1..."
+                  data-i18n-placeholder="upload_placeholder_story"
+                  style="resize: vertical"
+                ></textarea>
+              </div>
+
+              <button
+                type="submit"
+                id="submitUploadBtn"
+                class="btn-primary"
+                style="
+                  padding: 15px;
+                  margin-top: 10px;
+                  border-radius: 12px;
+                  font-weight: 700;
+                  font-size: 1rem;
+                "
+              >
+                <span data-i18n="upload_btn_submit">Upload Buku ke Database</span>
+              </button>
+              <p
+                id="uploadMessage"
+                style="
+                  text-align: center;
+                  margin-top: 10px;
+                  font-weight: 600;
+                  font-size: 0.9rem;
+                "
+              ></p>
+            </form>
+          </section>
+        </div>
+
+        <div class="col-preview">
+          <p
+            style="
+              font-weight: 700;
+              color: #6b7280;
+              font-size: 0.8rem;
+              text-transform: uppercase;
+              margin-bottom: 15px;
+              letter-spacing: 1px;
+            "
+          >
+            Live Preview Card
+          </p>
+
+          <div
+            id="livePreviewCard"
+            class="book-card"
+            style="
+              margin: 0;
+              cursor: default;
+              width: 340px;
+              min-width: 340px;
+              max-width: 340px;
+              background: #ffffff;
+              border-radius: 12px;
+              overflow: hidden;
+              border: 1px solid #e5e7eb;
+              box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+              display: flex;
+              flex-direction: column;
+            "
+          >
+            <div
+              class="book-cover"
+              id="previewCover"
+              style="
+                height: 250px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                background: #ffffff;
+                border-bottom: 1px solid #e5e7eb;
+                box-sizing: border-box;
+                padding: 20px;
+              "
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+                style="width: 120px; height: 120px; color: #9ca3af"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 6.042A8.967 8.967 0 0 0 6 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 0 1 6 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 0 1 6-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0 0 18 18a8.967 8.967 0 0 0-6 2.292m0-14.25v14.25"
+                />
+              </svg>
+            </div>
+
+            <div
+              class="book-info"
+              style="padding: 24px; width: 100%; box-sizing: border-box"
+            >
+              <h3
+                id="previewTitle"
+                style="
+                  width: 100%;
+                  box-sizing: border-box;
+                  font-size: 1.2rem;
+                  font-weight: 800;
+                  color: #111827;
+                  margin: 0 0 8px 0;
+                  display: -webkit-box;
+                  -webkit-line-clamp: 2;
+                  -webkit-box-orient: vertical;
+                  overflow: hidden;
+                  white-space: normal;
+                  word-break: normal;
+                  overflow-wrap: break-word;
+                "
+              >
+                Judul Buku (2026)
+              </h3>
+              <p
+                class="author"
+                id="previewAuthor"
+                style="
+                  width: 100%;
+                  box-sizing: border-box;
+                  font-size: 0.95rem;
+                  color: #6b7280;
+                  text-align: left;
+                  margin: 0 0 24px 0;
+                  display: -webkit-box;
+                  -webkit-line-clamp: 2;
+                  -webkit-box-orient: vertical;
+                  overflow: hidden;
+                  white-space: normal;
+                  word-break: normal;
+                  overflow-wrap: break-word;
+                "
+              >
+                Nama Penulis
+              </p>
+
+              <div
+                style="
+                  display: flex;
+                  justify-content: space-between;
+                  align-items: center;
+                  margin-bottom: 24px;
+                  font-size: 0.9rem;
+                "
+              >
+                <div style="display: flex; gap: 12px; align-items: center">
+                  <div
+                    style="
+                      display: flex;
+                      align-items: center;
+                      gap: 4px;
+                      color: #6b7280;
+                    "
+                    title="Dilihat 0 kali"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke-width="1.5"
+                      stroke="currentColor"
+                      style="width: 18px; height: 18px"
+                    >
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M2.036 12.322a1.012 1.012 0 0 1 0-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178Z"
+                      />
+                      <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+                      />
+                    </svg>
+                    0
+                  </div>
+
+                  <div
+                    style="
+                      display: flex;
+                      align-items: center;
+                      gap: 4px;
+                      color: #374151;
+                      font-weight: 700;
+                    "
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="#eab308"
+                      style="width: 16px; height: 16px"
+                    >
+                      <path
+                        fill-rule="evenodd"
+                        d="M10.788 3.21c.448-1.077 1.976-1.077 2.424 0l2.082 5.007 5.404.433c1.164.093 1.636 1.545.749 2.305l-4.117 3.527 1.257 5.273c.271 1.136-.964 2.033-1.96 1.425L12 18.354 7.373 21.18c-.996.608-2.231-.29-1.96-1.425l1.257-5.273-4.117-3.527c-.887-.76-.415-2.212.749-2.305l5.404-.433 2.082-5.006z"
+                        clip-rule="evenodd"
+                      />
+                    </svg>
+                    <span>5.0</span>
+                  </div>
+                </div>
+
+                <!-- GRUP KANAN: Status & Stok -->
+                <div style="display: flex; gap: 10px; align-items: center">
+                  <span
+                    style="
+                      background: #dcfce7;
+                      color: #166534;
+                      padding: 6px 14px;
+                      border-radius: 16px;
+                      font-weight: 700;
+                      font-size: 0.8rem;
+                    "
+                  >
+                    Tersedia
+                  </span>
+
+                  <div
+                    id="previewStock"
+                    style="font-weight: 700; color: #111827; font-size: 0.9rem"
+                    title="Tersedia 1 dari 1 buku"
+                  >
+                    1/1
+                  </div>
+                </div>
+              </div>
+
+              <div class="action-buttons">
+                <button
+                  type="button"
+                  class="btn-primary w-full info-btn"
+                  style="
+                    pointer-events: none;
+                    width: 100%;
+                    padding: 14px;
+                    background: #000000;
+                    color: white;
+                    border: none;
+                    border-radius: 8px;
+                    font-weight: 700;
+                    font-size: 0.95rem;
+                    font-family: inherit;
+                  "
+                >
+                  Detail Buku
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <div id="authModal" class="modal-overlay">
+      <div class="modal-content auth-box">
+        <form id="loginForm" class="auth-form">
+          <div class="auth-header">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="auth-icon"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09l2.846.813-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a2.25 2.25 0 0 0-1.506-1.506L15.2 7l1.035-.259a2.25 2.25 0 0 0 1.506-1.506L18 4.2l.259 1.035a2.25 2.25 0 0 0 1.506 1.506L20.8 7l-1.035.259a2.25 2.25 0 0 0-1.506 1.506Z"
+              />
+            </svg>
+            <h2 class="auth-title" data-i18n="auth_welcome">Selamat Datang</h2>
+            <p class="auth-subtitle" data-i18n="auth_login_subtitle">Silakan masuk ke akun Anda</p>
+          </div>
+
+          <div class="input-group">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+              />
+            </svg>
+            <input
+              type="text"
+              id="loginUsername"
+              placeholder="Username" data-i18n-placeholder="placeholder_username"
+              required
+            />
+          </div>
+
+          <div class="input-group">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
+              />
+            </svg>
+            <input
+              type="email"
+              id="loginEmail"
+              placeholder="Email Address" data-i18n-placeholder="placeholder_email"
+              required
+            />
+          </div>
+
+          <div class="input-group">
+            <svg
+              class="icon-left"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
+              />
+            </svg>
+            <input
+              type="password"
+              id="loginPassword"
+              placeholder="Password" data-i18n-placeholder="placeholder_password"
+              required
+            />
+
+            <button
+              type="button"
+              class="toggle-password"
+              data-target="loginPassword"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <button
+            type="submit"
+            class="btn-primary w-full"
+            id="loginSubmitBtn"
+            style="margin-top: 10px; padding: 12px; font-size: 1rem"
+          >
+            Masuk
+          </button>
+          <p id="loginError" class="error-msg"></p>
+
+          <p class="auth-switch">
+            <span data-i18n="auth_new_here">Belum pernah kesini?</span>
+            <span id="switchToRegister" class="text-link">Register</span>
+          </p>
+        </form>
+
+        <form id="registerForm" class="auth-form hidden">
+          <div class="auth-header">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+              class="auth-icon"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09l2.846.813-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a2.25 2.25 0 0 0-1.506-1.506L15.2 7l1.035-.259a2.25 2.25 0 0 0 1.506-1.506L18 4.2l.259 1.035a2.25 2.25 0 0 0 1.506 1.506L20.8 7l-1.035.259a2.25 2.25 0 0 0-1.506 1.506Z"
+              />
+            </svg>
+            <h2 class="auth-title" data-i18n="auth_reg_title">Daftar Akun</h2>
+            <p class="auth-subtitle" data-i18n="auth_reg_subtitle">Bergabung dengan letsknowledge.</p>
+          </div>
+
+          <div class="input-group">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.501 20.118a7.5 7.5 0 0 1 14.998 0A17.933 17.933 0 0 1 12 21.75c-2.676 0-5.216-.584-7.499-1.632Z"
+              />
+            </svg>
+            <input
+              type="text"
+              id="regName"
+              placeholder="Nama Lengkap" data-i18n-placeholder="placeholder_fullname"
+              required
+            />
+          </div>
+
+          <div class="input-group">
+            <svg
+              class="icon-left"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M16.5 12a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0Zm0 0c0 1.657 1.007 3 2.25 3S21 13.657 21 12a9 9 0 1 0-2.636 6.364M16.5 12V8.25"
+              />
+            </svg>
+            <input
+              type="text"
+              id="regUsername"
+              placeholder="Username" data-i18n-placeholder="placeholder_username"
+              required
+            />
+          </div>
+
+          <div class="input-group">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75"
+              />
+            </svg>
+            <input type="email" id="regEmail" placeholder="Email Address" data-i18n-placeholder="placeholder_email" required />
+          </div>
+
+          <div class="input-group">
+            <svg
+              class="icon-left"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
+              />
+            </svg>
+            <input
+              type="password"
+              id="regPassword"
+              placeholder="Password" data-i18n-placeholder="placeholder_password"
+              required
+            />
+            <button
+              type="button"
+              class="toggle-password"
+              data-target="regPassword"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <div class="input-group">
+            <svg
+              class="icon-left"
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.5"
+              stroke="currentColor"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z"
+              />
+            </svg>
+            <input
+              type="password"
+              id="regConfirmPassword"
+              placeholder="Confirm Password" data-i18n-placeholder="placeholder_confirm_password"
+              required
+            />
+            <button
+              type="button"
+              class="toggle-password"
+              data-target="regConfirmPassword"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke-width="1.5"
+                stroke="currentColor"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M3.98 8.223A10.477 10.477 0 0 0 1.934 12C3.226 16.338 7.244 19.5 12 19.5c.993 0 1.953-.138 2.863-.395M6.228 6.228A10.451 10.451 0 0 1 12 4.5c4.756 0 8.773 3.162 10.065 7.498a10.522 10.522 0 0 1-4.293 5.774M6.228 6.228 3 3m3.228 3.228 3.65 3.65m7.894 7.894L21 21m-3.228-3.228-3.65-3.65m0 0a3 3 0 1 0-4.243-4.243m4.242 4.242L9.88 9.88"
+                />
+              </svg>
+            </button>
+          </div>
+
+          <button
+            type="submit"
+            class="btn-primary w-full"
+            id="regSubmitBtn"
+            style="margin-top: 10px; padding: 12px; font-size: 1rem"
+          >
+            Daftar Akun
+          </button>
+          <p id="regError" class="error-msg"></p>
+
+          <p class="auth-switch">
+            <span data-i18n="auth_already_here">Sudah pernah kesini?</span>
+            <span id="switchToLogin" class="text-link">Login!</span>
+          </p>
+        </form>
+      </div>
+    </div>
+
+    <nav id="floatingNav" class="floating-nav">
+      <button id="openSettingsBtn" class="nav-item" title="Pengaturan" data-i18n-title="nav_settings">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 0 0 2.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 0 0 1.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 0 0 -1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 0 0 -2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 0 0 -2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 0 0 -1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 0 0 1.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"
+          />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"
+          />
+        </svg>
+      </button>
+
+      <a href="perpus.html" class="nav-item" title="Perpustakaan" data-i18n-title="nav_library">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6ZM3.75 15.75A2.25 2.25 0 0 1 6 13.5h2.25a2.25 2.25 0 0 1 2.25 2.25V18a2.25 2.25 0 0 1-2.25 2.25H6A2.25 2.25 0 0 1 3.75 18v-2.25ZM13.5 6a2.25 2.25 0 0 1 2.25-2.25H18A2.25 2.25 0 0 1 20.25 6v2.25A2.25 2.25 0 0 1 18 10.5h-2.25a2.25 2.25 0 0 1-2.25-2.25V6ZM13.5 15.75a2.25 2.25 0 0 1 2.25-2.25H18a2.25 2.25 0 0 1 2.25 2.25V18A2.25 2.25 0 0 1 18 20.25h-2.25A2.25 2.25 0 0 1 13.5 18v-2.25Z"
+          />
+        </svg>
+      </a>
+
+      <a href="favorit.html" class="nav-item" title="Buku Favorit" data-i18n-title="nav_favorites">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z"
+          />
+        </svg>
+      </a>
+
+      <a href="home.html" class="nav-item" title="Halaman Utama" data-i18n-title="nav_home">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="m2.25 12 8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25"
+          />
+        </svg>
+      </a>
+
+      <a href="riwayat.html" class="nav-item" title="Riwayat Aktivitas" data-i18n-title="nav_history">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"
+          />
+        </svg>
+      </a>
+
+      <a href="peminjaman.html" class="nav-item" title="Status Peminjaman" data-i18n-title="nav_borrow_status">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke-width="1.5"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3Z"
+          />
+        </svg>
+      </a>
+
+      <div id="adminLinkContainer"></div>
+    </nav>
+
+    <div id="settingsModal" class="modal-overlay hidden">
+      <div class="modal-content auth-box" style="max-width: 320px">
+        <div class="auth-header">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke-width="1.5"
+            stroke="currentColor"
+            class="auth-icon"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M9.594 3.94c.09-.542.56-.94 1.11-.94h2.593c.55 0 1.02.398 1.11.94l.213 1.281c.063.374.313.686.645.87.074.04.147.083.22.127.325.196.72.257 1.075.124l1.217-.456a1.125 1.125 0 0 1 1.37.49l1.296 2.247a1.125 1.125 0 0 1-.26 1.431l-1.003.827c-.293.241-.438.613-.43.992a7.723 7.723 0 0 1 0 .255c-.008.378.137.75.43.99l1.004.828c.424.35.534.955.26 1.43l-1.298 2.247a1.125 1.125 0 0 1-1.369.491l-1.217-.456c-.355-.133-.75-.072-1.076.124a6.47 6.47 0 0 1-.22.128c-.331.183-.581.495-.644.869l-.213 1.281c-.09.543-.56.94-1.11.94h-2.594c-.55 0-1.019-.398-1.11-.94l-.213-1.281c-.062-.374-.312-.686-.644-.87a6.52 6.52 0 0 1-.22-.127c-.325-.196-.72-.257-1.076-.124l-1.217.456a1.125 1.125 0 0 1-1.369-.49l-1.297-2.247a1.125 1.125 0 0 1 .26-1.431l1.004-.827c.292-.24.437-.613.43-.991a6.932 6.932 0 0 1 0-.255c.007-.38-.138-.751-.43-.992l-1.004-.827a1.125 1.125 0 0 1-.26-1.43l1.297-2.247a1.125 1.125 0 0 1 1.37-.491l1.216.456c.356.133.751.072 1.076-.124.072-.044.146-.086.22-.128.332-.183.582-.495.644-.869l.214-1.28Z"
+            />
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              d="M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0Z"
+            />
+          </svg>
+          <h2 class="auth-title" data-i18n="settings_title">Pengaturan</h2>
+          <p class="auth-subtitle" data-i18n="settings_subtitle">Tema & Tampilan Demo</p>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px">
+          <div style="
+              position: relative;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              background: #ffffff;
+              border: 1px solid #e5e7eb;
+              border-radius: 8px;
+              padding: 0 16px;
+              height: 44px;
+              box-sizing: border-box;
+              overflow: hidden;
+            ">
+            <div style="
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              background: repeating-linear-gradient(45deg, #fbbf24, #fbbf24 10px, #111827 10px, #111827 20px);
+              opacity: 0.9;
+              z-index: 10;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              cursor: not-allowed;
+            ">
+              <span style="background: #111827; color: #fbbf24; padding: 2px 8px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; border-radius: 4px; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.5);">Coming Soon</span>
+            </div>
+            <span style="font-size: 0.85rem; font-weight: 700; color: #4b5563; opacity: 0.4" data-i18n="dark_mode">Mode Gelap</span>
+            <div class="toggle" style="
+                  transform: scale(0.4);
+                  transform-origin: right center;
+                  margin-right: -10px;
+                  opacity: 0.4;
+                  pointer-events: none;
+                ">
+              <div>
+                <input type="checkbox" id="darkModeToggle" disabled />
+                <div data-unchecked="Off" data-checked="On"></div>
+              </div>
+            </div>
+          </div>
+
+          <div style="
+              position: relative;
+              display: flex;
+              align-items: center;
+              justify-content: space-between;
+              background: #ffffff;
+              border: 1px solid #e5e7eb;
+              border-radius: 8px;
+              padding: 0 16px;
+              height: 44px;
+              box-sizing: border-box;
+              overflow: hidden;
+            ">
+            <div style="
+              position: absolute;
+              top: 0;
+              left: 0;
+              width: 100%;
+              height: 100%;
+              background: repeating-linear-gradient(45deg, #fbbf24, #fbbf24 10px, #111827 10px, #111827 20px);
+              opacity: 0.9;
+              z-index: 10;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              cursor: not-allowed;
+            ">
+              <span style="background: #111827; color: #fbbf24; padding: 2px 8px; font-size: 0.65rem; font-weight: 800; text-transform: uppercase; border-radius: 4px; letter-spacing: 0.5px; box-shadow: 0 2px 4px rgba(0,0,0,0.5);">Coming Soon</span>
+            </div>
+            <span style="font-size: 0.85rem; font-weight: 700; color: #4b5563; opacity: 0.4" data-i18n="language">Bahasa</span>
+            <div class="toggle" style="
+                  transform: scale(0.4);
+                  transform-origin: right center;
+                  margin-right: -10px;
+                  opacity: 0.4;
+                  pointer-events: none;
+                ">
+              <div>
+                <input type="checkbox" id="languageToggle" disabled />
+                <div data-unchecked="ID" data-checked="EN"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button id="closeSettingsBtn" class="btn-primary w-full" style="margin-top: 20px; padding: 10px" data-i18n="close_btn">Tutup</button>
+      </div>
+    </div>
+
+    <div id="globalLoader" class="global-loader-overlay hidden">
+      <div class="loader"></div>
+    </div>
+
+    <div id="chartDetailModal" class="modal-overlay hidden">
+      <div
+        class="modal-content"
+        style="max-width: 800px; width: 95%; padding: 30px; border-radius: 28px"
+      >
+        <div
+          style="
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+          "
+        >
+          <div>
+            <h2
+              id="modalChartTitle"
+              style="
+                font-size: 1.5rem;
+                font-weight: 800;
+                color: #111827;
+                letter-spacing: -0.5px;
+              "
+            >
+              Detail Data
+            </h2>
+            <p style="color: #6b7280; font-size: 0.9rem">
+              Analisis data lebih mendalam.
+            </p>
+          </div>
+
+          <div style="display: flex; gap: 10px; align-items: center">
+            <select
+              id="timeRangeFilter"
+              style="
+                padding: 8px 12px;
+                border-radius: 12px;
+                border: 1.5px solid #e5e7eb;
+                font-family: inherit;
+                font-weight: 600;
+                color: #374151;
+                cursor: pointer;
+              "
+            >
+              <option value="monthly">Per Bulan (Tahun Ini)</option>
+              <option value="yearly">Per Tahun (Semua)</option>
+            </select>
+
+            <button
+              id="closeChartModal"
+              style="
+                background: #f3f4f6;
+                border: none;
+                padding: 10px;
+                border-radius: 12px;
+                cursor: pointer;
+                color: #4b5563;
+              "
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div style="height: 400px; position: relative">
+          <canvas id="modalCanvas"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="javascript/main.js"></script>
+    <script type="module" src="javascript/upload.js"></script>
+  </body>
+</html>
