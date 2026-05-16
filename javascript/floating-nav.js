@@ -6,14 +6,23 @@ export function initFloatingNav() {
   if (floatingNav) {
     floatingNav.style.touchAction = "none";
 
-    const currentPath =
-      window.location.pathname.split("/").pop() || "home.html";
+    // Get current page - handle both clean URLs (/home) and regular (.html)
+    let currentFile = window.location.pathname.split("/").pop() || "home.html";
+    
+    // Normalize: remove .html and compare
+    if (currentFile === "" || currentFile === "/") currentFile = "home";
+    if (currentFile.endsWith(".html")) currentFile = currentFile.replace(".html", "");
+    
     const navItems = floatingNav.querySelectorAll(".nav-item");
 
     navItems.forEach((item) => {
       const href = item.getAttribute("href");
-      if (href && href === currentPath) {
-        item.classList.add("active");
+      if (href) {
+        // Normalize href too
+        let hrefFile = href.endsWith(".html") ? href.replace(".html", "") : href;
+        if (hrefFile === currentFile) {
+          item.classList.add("active");
+        }
       }
     });
 
@@ -81,7 +90,9 @@ export function initFloatingNav() {
 
         e.preventDefault();
         const targetUrl = link.getAttribute("href");
-        if (targetUrl === currentPath) return;
+        // Normalize target URL for comparison
+        let targetFile = targetUrl.endsWith(".html") ? targetUrl.replace(".html", "") : targetUrl;
+        if (targetFile === currentFile) return;
 
         showLoadingAndExecute(() => {
           window.location.href = targetUrl;
