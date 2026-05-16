@@ -146,21 +146,18 @@ function renderBorrowTable(borrowings) {
         <td style="white-space: nowrap;">${index + 1}</td>
         <td style="min-width: 220px;">
           <div style="display: flex; align-items: center; gap: 10px;">
-            <div class="table-thumb">${
-              item.cover.startsWith("<svg")
-                ? item.cover
-                : `<img src="${item.cover}" style="width: 100%; height: 100%; object-fit: contain;" />`
-            }</div>
-            <span style="font-weight: 600; white-space: normal;">${
-              item.title
-            }</span>
+            <div class="table-thumb">${item.cover.startsWith("<svg")
+          ? item.cover
+          : `<img src="${item.cover}" style="width: 100%; height: 100%; object-fit: contain;" />`
+        }</div>
+            <span style="font-weight: 600; white-space: normal;">${item.title
+        }</span>
           </div>
         </td>
         <td style="white-space: nowrap;">${borrowDate}</td>
         <td style="line-height: 1.4; white-space: nowrap;">
-          <span style="${deadlineStyle}">${
-        item.deadline
-      }</span>${dendaBadgeHtml}
+          <span style="${deadlineStyle}">${item.deadline
+        }</span>${dendaBadgeHtml}
         </td>
         <td style="white-space: nowrap;">
           <span class="${badgeClass} table-badge">${item.status}</span>

@@ -47,7 +47,7 @@ export const translations = {
     "err_pwd_mismatch": "Password tidak cocok!",
     "err_login_failed": "Email atau password salah.",
     "book_unit": "Buku",
-    "anonymous": "Mahasiswa Anonim",
+    "anonymous": "Mahasiswa",
     "user": "Pengguna",
     "admin": "Admin",
     "librarian": "Pustakawan",
