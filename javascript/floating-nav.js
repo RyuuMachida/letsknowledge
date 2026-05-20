@@ -6,10 +6,8 @@ export function initFloatingNav() {
   if (floatingNav) {
     floatingNav.style.touchAction = "none";
 
-    // Get current page - handle both clean URLs (/home) and regular (.html)
     let currentFile = window.location.pathname.split("/").pop() || "home.html";
     
-    // Normalize: remove .html and compare
     if (currentFile === "" || currentFile === "/") currentFile = "home";
     if (currentFile.endsWith(".html")) currentFile = currentFile.replace(".html", "");
     
@@ -18,7 +16,6 @@ export function initFloatingNav() {
     navItems.forEach((item) => {
       const href = item.getAttribute("href");
       if (href) {
-        // Normalize href too
         let hrefFile = href.endsWith(".html") ? href.replace(".html", "") : href;
         if (hrefFile === currentFile) {
           item.classList.add("active");

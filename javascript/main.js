@@ -15,6 +15,7 @@ import { openBookModal } from "./book-modal.js";
 import { initFloatingNav } from "./floating-nav.js";
 import { addHistory, getActiveBorrowCount } from "./db-logic.js";
 import { initFooter } from "./footer.js";
+import { initChat, destroyChat } from "./chat.js";
 import {
   doc,
   getDoc,
@@ -375,6 +376,9 @@ onAuthStateChanged(auth, async (user) => {
     if (bookGrid) bookGrid.classList.remove("hidden");
     if (typeof loadTopBooks === "function") await loadTopBooks();
 
+    // Inisialisasi Chat Melayang
+    initChat(user);
+
     globalLoader?.classList.add("hidden");
   } else {
     authModal?.classList.remove("hidden");
@@ -382,6 +386,9 @@ onAuthStateChanged(auth, async (user) => {
 
     const adminContainer = document.getElementById("adminLinkContainer");
     if (adminContainer) adminContainer.innerHTML = "";
+
+    // Bersihkan Chat Melayang
+    destroyChat();
 
     globalLoader?.classList.add("hidden");
   }

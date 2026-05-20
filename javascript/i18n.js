@@ -278,6 +278,14 @@ export const translations = {
     "admin_btn_reject": "Tolak",
     "admin_btn_return": "Kembalikan",
     "admin_btn_review": "Ulasan",
+    "chat_support_title": "Dukungan letsknowledge.",
+    "chat_support_subtitle": "Tim kami aktif membantu Anda",
+    "chat_inbox_title": "Pesan Masuk",
+    "chat_inbox_subtitle": "Kelola pesan dari mahasiswa",
+    "chat_input_placeholder": "Ketik pesan Anda...",
+    "chat_no_messages": "Belum ada pesan. Mulai obrolan sekarang!",
+    "chat_typing": "sedang mengetik...",
+    "chat_online": "Aktif",
   }
 };
 
@@ -291,13 +299,15 @@ export function getLanguage() {
 }
 
 export function applyTranslations(lang) {
-  const dict = translations[lang];
+  const dict = translations[lang] || translations['id'];
   if (!dict) return;
 
   document.querySelectorAll('[data-i18n]').forEach(el => {
     const key = el.getAttribute('data-i18n');
     if (dict[key]) {
       el.innerHTML = dict[key];
+    } else if (translations['id'] && translations['id'][key]) {
+      el.innerHTML = translations['id'][key];
     }
   });
 
@@ -305,6 +315,8 @@ export function applyTranslations(lang) {
     const key = el.getAttribute('data-i18n-placeholder');
     if (dict[key]) {
       el.placeholder = dict[key];
+    } else if (translations['id'] && translations['id'][key]) {
+      el.placeholder = translations['id'][key];
     }
   });
 
@@ -312,11 +324,19 @@ export function applyTranslations(lang) {
     const key = el.getAttribute('data-i18n-title');
     if (dict[key]) {
       el.title = dict[key];
+    } else if (translations['id'] && translations['id'][key]) {
+      el.title = translations['id'][key];
     }
   });
 }
 
 export function getTranslation(key) {
   const lang = getLanguage();
-  return translations[lang] && translations[lang][key] ? translations[lang][key] : key;
+  if (translations[lang] && translations[lang][key]) {
+    return translations[lang][key];
+  }
+  if (translations['id'] && translations['id'][key]) {
+    return translations['id'][key];
+  }
+  return key;
 }
