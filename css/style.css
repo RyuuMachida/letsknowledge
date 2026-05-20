@@ -15,6 +15,7 @@ html::-webkit-scrollbar {
   padding: 0;
   box-sizing: border-box;
   font-family: "Inter", sans-serif;
+  -webkit-tap-highlight-color: transparent;
 }
 
 :root {
