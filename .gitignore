@@ -1,0 +1,5 @@
+TUGAS.MD
+tugas.md
+*.md
+node_modules/
+.env
