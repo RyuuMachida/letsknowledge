@@ -318,16 +318,20 @@
 
 .wa-chat-inbox-search {
   padding: 10px 14px;
-  background-color: #f6f6f6;
-  border-bottom: 1.5px solid #eaeaea;
+  background-color: #ffffff;
+  border-bottom: 1px solid #f3f4f6;
 }
 
 .wa-chat-inbox-search input {
-  padding: 8px 12px;
-  border-radius: 18px;
-  background-color: #ffffff;
-  border: 1px solid #e0e0e0;
-  font-size: 0.82rem;
+  width: 100%;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1px solid #e5e7eb;
+  background-color: #f9fafb;
+  font-family: var(--wa-font-family);
+  font-size: 0.85rem;
+  outline: none;
+  transition: all 0.2s;
 }
 
 .wa-chat-inbox-list {

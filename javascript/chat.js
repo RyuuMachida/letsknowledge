@@ -24,12 +24,20 @@ let activeChatStudentId = null; // Menyimpan ID mahasiswa yang sedang dichat (ji
 let unsubChatList = null;       // Unsubscribe listener daftar chat (admin)
 let unsubMessages = null;       // Unsubscribe listener pesan aktif
 let unsubChatDoc = null;        // Unsubscribe listener dokumen chat (untuk typing indicator, dll)
+let unsubPresence = null;       // Unsubscribe listener presence status (Header online)
 let isChatOpen = false;
 let typingTimeout = null;
 
 // State edit pesan
 let editingMessageId = null;   // ID dokumen pesan yang sedang diedit
 let editingStudentId = null;   // studentId room chat yang sedang diedit
+
+// Listener unload untuk membersihkan presence
+const handleBeforeUnload = () => setUserOnlineStatus(false);
+const handleVisibilityChange = () => {
+  if (document.visibilityState === 'hidden') setUserOnlineStatus(false);
+  else setUserOnlineStatus(true);
+};
 
 // Elemen DOM Chat Melayang
 let chatBtn = null;
@@ -41,6 +49,29 @@ let chatPanel = null;
  */
 function getDefaultAvatarSVG(size = "22px") {
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#111827" style="width: ${size}; height: ${size};"><path fill-rule="evenodd" d="M7.5 6a4.5 4.5 0 1 1 9 0 4.5 4.5 0 0 1-9 0ZM3.751 20.105a8.25 8.25 0 0 1 16.498 0 .75.75 0 0 1-.437.695A18.683 18.683 0 0 1 12 22.5c-2.786 0-5.433-.608-7.812-1.7a.75.75 0 0 1-.437-.695Z" clip-rule="evenodd"></path></svg>`;
+}
+
+/**
+ * Mendapatkan SVG Logo Utama Letsknowledge.
+ * @param {string} size - Ukuran lebar dan tinggi SVG
+ */
+function getLetsknowledgeLogoSVG(size = "24px") {
+  return `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" style="width: ${size}; height: ${size}; color: #111827;">
+    <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904 9 18.75l-.813-2.846a4.5 4.5 0 0 0-3.09-3.09L2.25 12l2.846-.813a4.5 4.5 0 0 0 3.09-3.09L9 5.25l.813 2.846a4.5 4.5 0 0 0 3.09 3.09l2.846.813-2.846.813a4.5 4.5 0 0 0-3.09 3.09ZM18.259 8.715 18 9.75l-.259-1.035a2.25 2.25 0 0 0-1.506-1.506L15.2 7l1.035-.259a2.25 2.25 0 0 0 1.506-1.506L18 4.2l.259 1.035a2.25 2.25 0 0 0 1.506 1.506L20.8 7l-1.035.259a2.25 2.25 0 0 0-1.506 1.506Z" />
+  </svg>`;
+}
+
+/**
+ * Update Status Online pengguna ke Firestore
+ */
+async function setUserOnlineStatus(isOnline) {
+  if (!currentUser) return;
+  try {
+    const userRef = doc(db, "users", currentUser.uid);
+    await updateDoc(userRef, { isOnline: isOnline });
+  } catch (error) {
+    console.warn("Gagal update status online:", error);
+  }
 }
 
 /**
@@ -77,6 +108,11 @@ export async function initChat(firebaseUser) {
   
   // Buka Pendengar Notifikasi (Lencana Unread) Real-Time
   listenToUnreadNotifications();
+
+  // Set status online dan pasang event listener
+  setUserOnlineStatus(true);
+  window.addEventListener("beforeunload", handleBeforeUnload);
+  document.addEventListener("visibilitychange", handleVisibilityChange);
 }
 
 /**
@@ -92,6 +128,12 @@ export function destroyChat() {
     chatPanel.remove();
     chatPanel = null;
   }
+  
+  // Set offline
+  setUserOnlineStatus(false);
+  window.removeEventListener("beforeunload", handleBeforeUnload);
+  document.removeEventListener("visibilitychange", handleVisibilityChange);
+
   currentUser = null;
   currentUserRole = "mahasiswa";
   activeChatStudentId = null;
@@ -105,6 +147,7 @@ function stopAllListeners() {
   if (unsubChatList) { unsubChatList(); unsubChatList = null; }
   if (unsubMessages) { unsubMessages(); unsubMessages = null; }
   if (unsubChatDoc)  { unsubChatDoc();  unsubChatDoc = null;  }
+  if (unsubPresence) { unsubPresence(); unsubPresence = null; }
 }
 
 /**
@@ -179,6 +222,32 @@ function playPopSound() {
     oscillator.stop(audioCtx.currentTime + 0.15);
   } catch (e) {
     // Abaikan jika browser memblokir audio otomatis
+  }
+}
+
+/**
+ * Suara Notifikasi Kirim Pesan (Swoosh)
+ */
+function playSendSound() {
+  try {
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audioCtx.createOscillator();
+    const gainNode = audioCtx.createGain();
+    
+    oscillator.type = "sine";
+    oscillator.frequency.setValueAtTime(600, audioCtx.currentTime); // Hz sedikit lebih tinggi
+    oscillator.frequency.exponentialRampToValueAtTime(300, audioCtx.currentTime + 0.1);
+    
+    gainNode.gain.setValueAtTime(0.02, audioCtx.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.15);
+    
+    oscillator.connect(gainNode);
+    gainNode.connect(audioCtx.destination);
+    
+    oscillator.start();
+    oscillator.stop(audioCtx.currentTime + 0.15);
+  } catch (e) {
+    // Abaikan
   }
 }
 
@@ -258,7 +327,7 @@ async function openConversation(studentId) {
         <div class="wa-chat-header-info">
           <span class="wa-chat-header-title">${isStaff ? studentName : getTranslation("chat_support_title")}</span>
           <span class="wa-chat-header-subtitle" id="waHeaderStatus">
-            <span class="wa-chat-online-dot"></span> ${getTranslation("chat_online")}
+            <span class="wa-chat-online-dot"></span> <span id="waHeaderTextStatus">${getTranslation("chat_online")}</span>
           </span>
         </div>
       </div>
@@ -344,7 +413,20 @@ async function openConversation(studentId) {
 
   // 4. Dengarkan Status Mengetik Pihak Lawan
   listenToChatDocument(studentId);
-  
+
+  // Jalankan Listener Kehadiran (Presence) sesuai peran
+  if (isStaff) {
+    // Admin melihat status online 1 mahasiswa
+    listenToStudentPresence(studentId);
+  } else {
+    // Mahasiswa melihat berapa admin yang online
+    listenToStaffPresence();
+  }
+
+  // Jika belum ada chat document, buat (hanya untuk mahasiswa)
+  if (!isStaff) {
+    checkAndCreateChatDoc(studentId);
+  }
   // Scroll Otomatis ke Bawah
   scrollToBottom();
 }
@@ -429,9 +511,13 @@ async function sendMessage(studentId) {
       await updateDoc(chatDocRef, updateData);
     }
 
-    playPopSound();
+    // Mainkan suara kirim pesan sukses (Swoosh)
+    playSendSound();
+
+    // Langsung pindah scroll ke paling bawah
+    scrollToBottom();
   } catch (error) {
-    console.error("Gagal mengirimkan pesan obrolan:", error);
+    console.error("Gagal mengirim pesan:", error);
   }
 }
 
@@ -729,6 +815,80 @@ function scrollToBottom() {
 
 /**
  * ==========================================
+ * FITUR PRESENCE (Status Online)
+ * ==========================================
+ */
+
+/**
+ * Mendengarkan Status Kehadiran (isOnline) milik satu Mahasiswa tertentu.
+ */
+function listenToStudentPresence(studentId) {
+  if (unsubPresence) { unsubPresence(); unsubPresence = null; }
+  
+  const docRef = doc(db, "users", studentId);
+  unsubPresence = onSnapshot(docRef, (docSnap) => {
+    const statusDot = document.querySelector(".wa-chat-online-dot");
+    const statusText = document.getElementById("waHeaderTextStatus");
+    if (!statusDot || !statusText) return;
+
+    if (docSnap.exists() && docSnap.data().isOnline === true) {
+      statusDot.style.backgroundColor = "#25d366";
+      statusText.textContent = getTranslation("chat_online") || "Aktif";
+    } else {
+      statusDot.style.backgroundColor = "#9ca3af";
+      statusText.textContent = "Offline";
+    }
+  }, (err) => {
+    console.warn("Gagal listen ke profil student:", err);
+  });
+}
+
+/**
+ * Mendengarkan Seluruh Staf untuk menghitung berapa yang Online/Offline.
+ */
+function listenToStaffPresence() {
+  if (unsubPresence) { unsubPresence(); unsubPresence = null; }
+  
+  const q = query(
+    collection(db, "users"),
+    where("role", "in", ["developer", "admin", "pustakawan"])
+  );
+  
+  unsubPresence = onSnapshot(q, (snapshot) => {
+    let onlineCount = 0;
+    let offlineCount = 0;
+    
+    snapshot.forEach(d => {
+      if (d.data().isOnline === true) {
+        onlineCount++;
+      } else {
+        offlineCount++;
+      }
+    });
+    
+    // Cek juga jika thekingoflibrary online (bisa jadi dia role nya "mahasiswa" di db)
+    // Untuk saat ini kita anggap role thekingoflibrary sudah diset ke developer/admin
+    // Tetapi amannya, kita panggil secara terpisah jika thekingoflibrary tidak termasuk dalam role tersebut
+    // Di aplikasi ini "developer" sudah tercover di query "in".
+
+    const statusDot = document.querySelector(".wa-chat-online-dot");
+    const statusText = document.getElementById("waHeaderTextStatus");
+    if (!statusDot || !statusText) return;
+
+    if (onlineCount > 0) {
+      statusDot.style.backgroundColor = "#25d366";
+      statusText.textContent = `${onlineCount} Online, ${offlineCount} Offline`;
+    } else {
+      statusDot.style.backgroundColor = "#9ca3af";
+      statusText.textContent = `${offlineCount} Offline`;
+    }
+  }, (err) => {
+    console.warn("Gagal listen ke profil staf:", err);
+  });
+}
+
+/**
+ * ==========================================
  * HAPUS & EDIT PESAN
  * ==========================================
  */
@@ -849,12 +1009,12 @@ function renderAdminInbox() {
     <!-- Header WA Inbox -->
     <header class="wa-chat-header">
       <div class="wa-chat-header-left">
-        <div class="wa-chat-avatar">
-          ${getDefaultAvatarSVG("24px")}
+        <div class="wa-chat-avatar" style="background: transparent;">
+          ${getLetsknowledgeLogoSVG("28px")}
         </div>
         <div class="wa-chat-header-info">
-          <span class="wa-chat-header-title">${getTranslation("chat_inbox_title")}</span>
-          <span class="wa-chat-header-subtitle">${getTranslation("chat_inbox_subtitle")}</span>
+          <span class="wa-chat-header-title">letsknowledge.</span>
+          <span class="wa-chat-header-subtitle">kelola pesan masuk dari mahasiswa.</span>
         </div>
       </div>
       <button class="wa-chat-close-btn" id="waChatCloseBtn" title="${getTranslation("close_btn")}">
