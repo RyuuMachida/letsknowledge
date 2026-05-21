@@ -891,7 +891,7 @@ function listenToStaffPresence() {
   }, (err) => {
     console.warn("Gagal listen ke profil staf:", err);
     const statusText = document.getElementById("waHeaderTextStatus");
-    if (statusText) statusText.textContent = "Error memuat status";
+    if (statusText) statusText.textContent = "Err: " + err.message;
   });
 }
 
