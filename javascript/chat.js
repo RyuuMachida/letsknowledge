@@ -327,7 +327,12 @@ async function openConversation(studentId) {
         <div class="wa-chat-header-info">
           <span class="wa-chat-header-title">${isStaff ? studentName : getTranslation("chat_support_title")}</span>
           <span class="wa-chat-header-subtitle" id="waHeaderStatus">
-            <span class="wa-chat-online-dot"></span> <span id="waHeaderTextStatus">${getTranslation("chat_online")}</span>
+            <span id="waHeaderPresenceContainer">
+              <span class="wa-chat-online-dot"></span> <span id="waHeaderTextStatus">${getTranslation("chat_online")}</span>
+            </span>
+            <span id="waHeaderTypingContainer" class="hidden" style="font-style: italic; color: #a7f3d0; font-weight: 600;">
+              ${getTranslation("chat_typing") || "Mengetik..."}
+            </span>
           </span>
         </div>
       </div>
@@ -726,15 +731,17 @@ function listenToChatDocument(studentId) {
 
     if (isOtherPartyTyping) {
       typingIndicator.classList.remove("hidden");
-      if (statusTextEl) {
-        statusTextEl.innerHTML = `<span style="font-style: italic; color: #a7f3d0; font-weight: 600;">${getTranslation("chat_typing")}</span>`;
-      }
+      const presenceCont = document.getElementById("waHeaderPresenceContainer");
+      const typingCont = document.getElementById("waHeaderTypingContainer");
+      if (presenceCont) presenceCont.classList.add("hidden");
+      if (typingCont) typingCont.classList.remove("hidden");
       scrollToBottom();
     } else {
       typingIndicator.classList.add("hidden");
-      if (statusTextEl) {
-        statusTextEl.innerHTML = `<span class="wa-chat-online-dot"></span> ${getTranslation("chat_online")}`;
-      }
+      const presenceCont = document.getElementById("waHeaderPresenceContainer");
+      const typingCont = document.getElementById("waHeaderTypingContainer");
+      if (presenceCont) presenceCont.classList.remove("hidden");
+      if (typingCont) typingCont.classList.add("hidden");
     }
   }, (error) => {
     console.warn("Gagal mendengarkan status dokumen chat:", error);
