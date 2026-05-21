@@ -428,10 +428,6 @@ async function openConversation(studentId) {
     listenToStaffPresence();
   }
 
-  // Jika belum ada chat document, buat (hanya untuk mahasiswa)
-  if (!isStaff) {
-    checkAndCreateChatDoc(studentId);
-  }
   // Scroll Otomatis ke Bawah
   scrollToBottom();
 }
