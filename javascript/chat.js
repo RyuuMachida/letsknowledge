@@ -856,28 +856,27 @@ function listenToStudentPresence(studentId) {
 function listenToStaffPresence() {
   if (unsubPresence) { unsubPresence(); unsubPresence = null; }
   
-  const q = query(
-    collection(db, "users"),
-    where("role", "in", ["developer", "admin", "pustakawan"])
-  );
+  // Mengambil semua user agar bisa filter field thekingoflibrary (boolean) dan role (string)
+  // Ini menghindari error index missing di Firestore.
+  const usersRef = collection(db, "users");
   
-  unsubPresence = onSnapshot(q, (snapshot) => {
+  unsubPresence = onSnapshot(usersRef, (snapshot) => {
     let onlineCount = 0;
     let offlineCount = 0;
     
     snapshot.forEach(d => {
-      if (d.data().isOnline === true) {
-        onlineCount++;
-      } else {
-        offlineCount++;
+      const data = d.data();
+      const isStaffMember = data.thekingoflibrary === true || ["developer", "admin", "pustakawan"].includes(data.role?.toLowerCase());
+      
+      if (isStaffMember) {
+        if (data.isOnline === true) {
+          onlineCount++;
+        } else {
+          offlineCount++;
+        }
       }
     });
     
-    // Cek juga jika thekingoflibrary online (bisa jadi dia role nya "mahasiswa" di db)
-    // Untuk saat ini kita anggap role thekingoflibrary sudah diset ke developer/admin
-    // Tetapi amannya, kita panggil secara terpisah jika thekingoflibrary tidak termasuk dalam role tersebut
-    // Di aplikasi ini "developer" sudah tercover di query "in".
-
     const statusDot = document.querySelector(".wa-chat-online-dot");
     const statusText = document.getElementById("waHeaderTextStatus");
     if (!statusDot || !statusText) return;
@@ -891,6 +890,8 @@ function listenToStaffPresence() {
     }
   }, (err) => {
     console.warn("Gagal listen ke profil staf:", err);
+    const statusText = document.getElementById("waHeaderTextStatus");
+    if (statusText) statusText.textContent = "Error memuat status";
   });
 }
 
